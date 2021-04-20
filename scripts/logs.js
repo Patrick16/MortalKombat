@@ -1,4 +1,6 @@
-export const logs = {
+import {getRandomElement, getTime} from "./helpers.js";
+
+const logs = {
     start: 'Часы показывали [time], когда [player1] и [player2] бросили вызов друг другу.',
     end: [
         'Результат удара [playerWins]: [playerLose] - труп',
@@ -37,3 +39,31 @@ export const logs = {
     ],
     draw: 'Ничья - это тоже победа!'
 };
+
+export const generateLogs = (type, player1, player2) => {
+    switch (type) {
+        case 'start':
+            return logs.start
+                .replace('[time]', getTime())
+                .replace('[player1]', player1.name)
+                .replace('[player2]', player2.name);
+        case 'end': {
+            return getRandomElement(logs[type])
+                .replace('[playerWins]', player1.name)
+                .replace('[playerLose]', player2.name);
+        }
+        case 'hit':
+        case 'defence': {
+            let log = getRandomElement(logs[type])
+                .replace('[playerKick]', player1.name)
+                .replace('[playerDefence]', player2.name);
+            // in case of hit/defence the player1 is always enemy, the player2 is always current player.
+            return `${getTime()} - ${log} -${player1.attackObject.value} ${player2.name}:[${player2.hp}/100]`;
+        }
+        case 'draw': {
+            return logs.draw;
+        }
+        default:
+            return 'Танцы с бубном...';
+    }
+}
