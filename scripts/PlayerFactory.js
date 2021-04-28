@@ -2,59 +2,52 @@ import {Player} from "./Player.js";
 import {getRandomElement} from "./helpers_functions.js";
 
 export class PlayerFactory {
+    characters = [];
 
-    getSonya = (player) => () => new Player({
-        name: 'Sonya',
-        hp: 100,
-        img: 'http://reactmarathon-api.herokuapp.com/assets/sonya.gif',
-        weapon: ['Gun'],
-        player: player
-    })
-    getScorpion = (player) => () => new Player({
-        name: 'Scorpion',
-        hp: 100,
-        img: 'http://reactmarathon-api.herokuapp.com/assets/scorpion.gif',
-        weapon: ['Kunai'],
-        player: player
-    })
-    getKitana = (player) => () => new Player({
-        name: 'Kitana',
-        hp: 100,
-        img: 'http://reactmarathon-api.herokuapp.com/assets/kitana.gif',
-        weapon: ['Battle fan'],
-        player: player
-    })
-    getLiuKang = (player) => () => new Player({
-        name: 'LiuKang',
-        hp: 100,
-        img: 'http://reactmarathon-api.herokuapp.com/assets/liukang.gif',
-        weapon: ['Fire ball'],
-        player: player
-    })
-    getSubzero = (player) => () => new Player({
-        name: 'Subzero',
-        hp: 100,
-        img: 'http://reactmarathon-api.herokuapp.com/assets/subzero.gif',
-        weapon: ['Freeze'],
-        player: player
-    })
-
-    characters = [
-        this.getSonya(),
-        this.getScorpion(),
-        this.getKitana(),
-        this.getLiuKang(),
-        this.getSubzero(),
-    ];
+    extendPlayer = (player, playerNumber, rootSelector = 'arenas') => {
+        return new Player({
+            ...player,
+            player: playerNumber,
+            rootSelector
+        });
+    }
 
     getPlayer1 = () => {
-        const player = getRandomElement(this.characters)();
-        player.player = 1;
-        return player;
+        return this.extendPlayer(
+            getRandomElement(this.characters),
+            1
+        );
     }
+
     getPlayer2 = () => {
-        const player = getRandomElement(this.characters)();
-        player.player = 2;
-        return player;
+        return this.extendPlayer(
+            getRandomElement(this.characters),
+            2
+        );
+    }
+
+    getPlayersAsync = async () => {
+        this.characters =
+            await fetch('https://reactmarathon-api.herokuapp.com/api/mk/players')
+                .then(res => res.json());
+    }
+
+    getRandomPlayerFromServerAsync = async (player) => {
+        return this.extendPlayer(
+            await fetch('https://reactmarathon-api.herokuapp.com/api/mk/player/choose')
+                .then(res => res.json()),
+            player);
+    }
+
+    attackAsync = async ({hit, defence}) => {
+        const response = await fetch('http://reactmarathon-api.herokuapp.com/api/mk/player/fight', {
+            method: 'POST',
+            body: JSON.stringify({
+                hit,
+                defence,
+            })
+        }).then(res => res.json());
+        console.log(response);
+        return response;
     }
 }

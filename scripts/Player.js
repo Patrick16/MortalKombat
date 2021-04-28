@@ -8,6 +8,7 @@ export class Player {
         this.img = props.img;
         this.weapon = props.weapon;
         this.attackObject = {};
+        this.rootSelector = props.rootSelector;
     }
 
     attackEnemy = (enemy, logs) => {
@@ -42,6 +43,7 @@ export class Player {
     }
 
     initialize = () => {
+        const $root = document.querySelector(`.${this.rootSelector}`);
         const $player = createDOMElement('div', `player${this.player}`);
         const $progressbar = createDOMElement('div', 'progressbar');
         const $character = createDOMElement('div', 'character');
@@ -56,6 +58,8 @@ export class Player {
         $img.src = this.img;
         $name.innerText = this.name;
         $life.style.width = `${this.hp}%`;
+        $root.appendChild($player);
+
         return $player;
     }
 }

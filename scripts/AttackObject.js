@@ -9,11 +9,14 @@ export class AttackObject {
     }
     ATTACK = ['head', 'body', 'foot'];
 
-    constructor($form) {
-        if ($form) {
+    constructor($form, props) {
+        if($form){
             this.playerAttack($form);
-        } else {
-            this.enemyAttack();
+        }
+        if(props){
+            this.value = props.value;
+            this.hit = props.hit;
+            this.defence = props.defence;
         }
     }
 
