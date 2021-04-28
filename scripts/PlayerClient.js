@@ -1,7 +1,7 @@
 import {Player} from "./Player.js";
 import {getRandomElement} from "./helpers_functions.js";
 
-export class PlayerFactory {
+export class PlayerClient {
     characters = [];
 
     extendPlayer = (player, playerNumber, rootSelector = 'arenas') => {
@@ -47,7 +47,6 @@ export class PlayerFactory {
                 defence,
             })
         }).then(res => res.json());
-        console.log(response);
         return response;
     }
 }
