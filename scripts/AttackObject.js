@@ -9,11 +9,11 @@ export class AttackObject {
     }
     ATTACK = ['head', 'body', 'foot'];
 
-    constructor($form) {
-        if ($form) {
-            this.playerAttack($form);
-        } else {
-            this.enemyAttack();
+    constructor(props) {
+        if(props){
+            this.value = props.value;
+            this.hit = props.hit;
+            this.defence = props.defence;
         }
     }
 
@@ -28,6 +28,7 @@ export class AttackObject {
             }
             item.checked = false;
         }
+        return this;
     }
 
     enemyAttack = () => {

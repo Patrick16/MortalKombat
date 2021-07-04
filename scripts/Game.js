@@ -7,22 +7,28 @@ export class Game {
     $arenas = document.querySelector('.arenas');
     $form = document.querySelector('.control');
 
-    constructor(factory) {
-        this.player1 = factory.getPlayer1();
-        this.player2 = factory.getPlayer2();
+    constructor(client) {
+        this.client = client;
         this.logs = new Logs();
     }
 
-    start = () => {
+    start = async () => {
+        await this.client.getPlayersAsync();
+        this.player1 = this.client.getPlayer1();
+        this.player2 = this.client.getPlayer2();
+
         this.logs.generateAndRenderLogs('start', this.player1, this.player2);
-        this.$arenas.appendChild(this.player1.initialize());
-        this.$arenas.appendChild(this.player2.initialize());
 
+        this.player1.initialize();
+        this.player2.initialize();
 
-        this.$form.addEventListener('submit', (event) => {
+        this.$form.addEventListener('submit', async (event) => {
             event.preventDefault();
-            this.player1.attackObject = new AttackObject(this.$form);
-            this.player2.attackObject = new AttackObject();
+
+            const result = await this.client.attackAsync(new AttackObject().playerAttack(this.$form));
+            this.player1.attackObject = new AttackObject(result.player1);
+            this.player2.attackObject = new AttackObject(result.player2);
+
             this.$button.disabled =
                 this.player1.attackEnemy(this.player2, this.logs) ||
                 this.player2.attackEnemy(this.player1, this.logs);
